@@ -31,7 +31,8 @@ public class JpqlMain {
       em.flush();
       em.clear(); // 비움
 
-      String query  = "select m from Member m, Team t where m.username = t.name";
+//1번      String query  = "select m from Member m left join m.team t on t.name = 'TeamA'";
+      String query  = "select m from Member m left join Team t on m.username = t.name"; // 2번
       List<Member> result = em.createQuery(query, Member.class)
           .getResultList();
 
