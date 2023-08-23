@@ -2,6 +2,8 @@ package inflearnjpa.jpql;
 
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -21,6 +23,9 @@ public class Member {
   @ManyToOne(fetch = FetchType.LAZY) // 중요.
   @JoinColumn(name = "TEAM_ID")
   private Team team;
+
+  @Enumerated(EnumType.STRING)
+  private MemberType type;
 
   public Long getId() {
     return id;
@@ -52,6 +57,10 @@ public class Member {
 
   public void setTeam(Team team) {
     this.team = team;
+  }
+
+  public void setType(MemberType type) {
+    this.type = type;
   }
 
   //연관관계 편의 메서드

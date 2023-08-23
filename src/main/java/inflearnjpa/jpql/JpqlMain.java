@@ -24,6 +24,7 @@ public class JpqlMain {
       Member member = new Member();
       member.setUsername("member1");
       member.setAge(10);
+      member.setType(MemberType.ADMIN); // 여기 추가
       em.persist(member);
 
       member.setTeam(team); // 연관관계 편의 메서드 만들러 Member 다녀옴.
@@ -31,14 +32,20 @@ public class JpqlMain {
       em.flush();
       em.clear(); // 비움
 
-      String query  = "select (select avg(m1.age) from Member m1) as avgAge  from Member m join Team t on m.username = t.name";
-      List<Member> result = em.createQuery(query, Member.class)
+//      String query  = "select m.username, 'HELLO', TRUE from Member m "
+//          + "where m.type = inflearnjpa.jpql.MemberType.USER";
+//      List<Object[]> result = em.createQuery(query)
+//              .getResultList();
+      String query  = "select m.username, 'HELLO', TRUE from Member m "
+          + "where m.type = :userType";
+      List<Object[]> result = em.createQuery(query)
+          .setParameter("userType", MemberType.ADMIN)
           .getResultList();
 
-      System.out.println("result.size = " + result.size());
-
-      for (Member member1 : result) {
-        System.out.println("member1 = " + member1);
+      for (Object[] objects : result) {
+        System.out.println("objects = " + objects[0]);
+        System.out.println("objects = " + objects[1]);
+        System.out.println("objects = " + objects[2]);
       }
 
       tx.commit();
@@ -50,5 +57,4 @@ public class JpqlMain {
     }
     emf.close();
   }
-
 }
