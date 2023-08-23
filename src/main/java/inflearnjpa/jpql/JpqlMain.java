@@ -16,20 +16,23 @@ public class JpqlMain {
     tx.begin();
 
     try {
-      for (int i = 0; i<100; i++) {
-        Member member = new Member();
-        member.setUsername("member" + i);
-        member.setAge(i);
-        em.persist(member);
-      }
+      // 팀 먼저 저장
+      Team team = new Team();
+      team.setName("TeamA");
+      em.persist(team);
+
+      Member member = new Member();
+      member.setUsername("member1");
+      member.setAge(10);
+      em.persist(member);
+
+      member.setTeam(team); // 연관관계 편의 메서드 만들러 Member 다녀옴.
 
       em.flush();
       em.clear(); // 비움
 
-      List<Member> result = em.createQuery("select m from Member m order by m.age desc",
-              Member.class)
-          .setFirstResult(1)
-          .setMaxResults(10)
+      String query  = "select m from Member m, Team t where m.username = t.name";
+      List<Member> result = em.createQuery(query, Member.class)
           .getResultList();
 
       System.out.println("result.size = " + result.size());
