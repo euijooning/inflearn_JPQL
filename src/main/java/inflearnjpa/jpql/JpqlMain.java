@@ -5,8 +5,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 public class JpqlMain {
 
@@ -20,38 +18,59 @@ public class JpqlMain {
     try {
       Member member = new Member();
       member.setUsername("member1");
+      member.setAge(10);
       em.persist(member);
 
-//      // TypeQuery, Query
-//      TypedQuery<Member> query1 =
-//          em.createQuery("SELECT m FROM Member m", Member.class);
-//      Query query2 =
-//          em.createQuery("SELECT m.username, m.age from Member m"); // String과 int라서. 다르다.
+      em.flush();
+      em.clear(); // 비움
 
-      // 결과 조회 API
-
-//      //이렇게 하면 반환이 타입 쿼리의 제네릭으로 들어간다.
-//      TypedQuery<Member> query = em.createQuery("select m from Member m", Member.class);
-//      List<Member> memberList = query.getResultList(); // 컬렉션이 반환 될 거야를 알려줌
+//      // 엔티티 프로젝션
+//      List<Member> result = em.createQuery("select m from Member m", Member.class)
+//              .getResultList();
+//      // 여기서 m이 엔티티인데, 그럼 엔티티들이 반환된다.
+//      // 얘는 영속성 컨텍스트에서 관리되는가?
 //
-//      for (Member member1 : memberList) { //출력하기
-//        System.out.println("member1 = " + member1);
-//      }
+//      // 정답은 바뀌면 관리가 되고, 안 바뀌면 관리가 안 된다.
+//      Member findMember = result.get(0);
+//      findMember.setAge(20); // 여기서는 바귐
 
-      /*
-      // 값이 무조건 하나라면, 단일 객체 반환
-      TypedQuery<Member> query = em.createQuery("select m from Member m where m.id = 10", Member.class);
-      Member singleResult = query.getSingleResult();
-      System.out.println("singleResult = " + singleResult);
-       */
-      //이거를
-//      TypedQuery<Member> query = em.createQuery("select m from Member m where m.username = :username", Member.class);
-//      query.setParameter("username", "member1");
-//      Member singleResult = query.getSingleResult();
-//      System.out.println("singleResult = " + singleResult.getUsername());
+//      // 2. 엔티티 프로젝션 - 팀
+//      List<Team> result = em.createQuery("select t from Member m join m.team t", Team.class)
+//              .getResultList();
 
-//      //위의 것을 더 세련되게 체인으로 설곟란다.
+//      // 3. 임베디드 타입 프로젝션
+//      List<Address> result = em.createQuery("select o.address from Order o", Address.class)
+//          .getResultList();
 
+//      // 4. 스칼라 타입 프로젝션
+//      em.createQuery("select m.username, m.age from Member m")
+//          .getResultList();
+
+//      // 1) Query 타입으로 조회
+//      List resultList = em.createQuery("select m.username, m.age from Member m")
+//          .getResultList();
+//
+//      Object o = resultList.get(0);
+//      Object[] result = (Object[]) o;
+//      System.out.println("username : " + result[0]);
+//      System.out.println("age : " + result[1]);
+
+//      //2) Object[] 타입으로 조회
+//      List<Object[]> resultList = em.createQuery("select m.username, m.age from Member m")
+//          .getResultList();
+//
+//      Object[] result = resultList.get(0);
+//      System.out.println("username : " + result[0]);
+//      System.out.println("age : " + result[1]);
+
+      // 3. new 명령어로 조회
+      List<MemberDto> result = em.createQuery(
+              "select new inflearnjpa.jpql.MemberDto(m.username, m.age) from Member m", MemberDto.class)
+          .getResultList();// 풀네임 다 적어줘야 한다.
+
+      MemberDto dto = result.get(0);
+      System.out.println("memberDto = " + dto.getUsername());
+      System.out.println("memberDto = " + dto.getAge());
 
       tx.commit();
     } catch (Exception e) {
