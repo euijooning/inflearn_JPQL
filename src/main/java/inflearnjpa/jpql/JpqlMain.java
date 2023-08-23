@@ -22,7 +22,9 @@ public class JpqlMain {
       em.persist(team);
 
       Member member = new Member();
-      member.setUsername("member1");
+//      member.setUsername("member1"); 빼버림
+//      member.setUsername("관리자");
+      member.setUsername("뉴진스");
       member.setAge(10);
       member.setType(MemberType.ADMIN); // 여기 추가
       em.persist(member);
@@ -32,21 +34,9 @@ public class JpqlMain {
       em.flush();
       em.clear(); // 비움
 
-//      String query =
-//          "select " +
-//              "case when m.age <= 10 then '학생요금' " +
-//              "     when m.age >= 60 then '경로요금' " +
-//              "     else '일반요금' " +
-//              "end " +
-//          "from Member m";
-      String query =
-          "select " + "case t.name "
-              + "when 'TeamA' then '인센티브 110%' "
-              + "when 'TeamB' then '인센티브 120%' "
-              + "else '인센티브 105%' "
-              + "end "
-              + "from Team t";
 
+//      String query = "select coalesce(m.username, '이름 없는 회원') from Member m";
+      String query = "select NULLIF(m.username, '관리자') from Member m";
       List<String> result = em.createQuery(query, String.class)
           .getResultList();
       for (String s : result) {
