@@ -44,17 +44,17 @@ public class JpqlMain {
       em.clear(); // 비움
 
 
-//      String query = "select m from Member m";
-      String query = "select m from Member m join fetch m.team";
-      List<Member> result = em.createQuery(query, Member.class)
+      String query = "select t from Team t join fetch t.members";
+      List<Team> result = em.createQuery(query, Team.class)
           .getResultList();
 
-      for (Member member : result) {
-        System.out.println("member = " + member + ", " + member.getTeam().getName());
-        //회원1, 팀A(SQL)
-        //회원2, 팀A(1차캐시 => 쿼리 없이 바로가져옴)
+      for (Team team : result) {
+        System.out.println("team = " + team.getName() + ", 인원수 : "+ team.getMembers().size());
 
-        //회원3 ,팀B(1차캐시에 없으므로 새로운 쿼리, SQL)
+        for (Member member : team.getMembers()) {
+          System.out.println(" -->  member = " + member);
+        }
+
       }
 
       tx.commit();
