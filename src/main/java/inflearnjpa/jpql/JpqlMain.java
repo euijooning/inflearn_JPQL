@@ -44,12 +44,14 @@ public class JpqlMain {
       em.clear(); // 비움
 
 
-      String query = "select m from Member m where m =:member";
-      Member findMember = em.createQuery(query, Member.class)
-          .setParameter("member", member1)
-          .getSingleResult();
+      List<Member> resultList =
+          em.createNamedQuery("Member.findByUsername", Member.class)
+              .setParameter("username", "회원1")
+              .getResultList();
 
-      System.out.println("findMember = " + findMember);
+      for (Member member : resultList) {
+        System.out.println("member = " + member);
+      }
 
 
       tx.commit();
