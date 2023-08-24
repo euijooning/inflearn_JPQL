@@ -16,29 +16,24 @@ public class JpqlMain {
     tx.begin();
 
     try {
-      // 팀 먼저 저장
-      Team team = new Team();
-      team.setName("TeamA");
-      em.persist(team);
 
-      Member member = new Member();
-//      member.setUsername("member1"); 빼버림
-//      member.setUsername("관리자");
-      member.setUsername("뉴진스");
-      member.setAge(10);
-      member.setType(MemberType.ADMIN); // 여기 추가
-      em.persist(member);
+      Member member1 = new Member();
+      member1.setUsername("관리자 1");
+      em.persist(member1);
 
-      member.setTeam(team); // 연관관계 편의 메서드 만들러 Member 다녀옴.
+      Member member2 = new Member();
+      member2.setUsername("관리자 2");
+      em.persist(member2);
+
 
       em.flush();
       em.clear(); // 비움
 
 
-//      String query = "select coalesce(m.username, '이름 없는 회원') from Member m";
-      String query = "select NULLIF(m.username, '관리자') from Member m";
+      String query = "select function('group_concat', m.username) from Member m";
       List<String> result = em.createQuery(query, String.class)
           .getResultList();
+
       for (String s : result) {
         System.out.println("s = " + s);
       }
