@@ -44,20 +44,13 @@ public class JpqlMain {
       em.clear(); // 비움
 
 
-      String query = "select t from Team t join t.members m";
-      List<Team> result = em.createQuery(query, Team.class)
-          .getResultList();
+      String query = "select m from Member m where m =:member";
+      Member findMember = em.createQuery(query, Member.class)
+          .setParameter("member", member1)
+          .getSingleResult();
 
-      System.out.println("result = " + result.size());
+      System.out.println("findMember = " + findMember);
 
-      for (Team team : result) {
-        System.out.println("team = " + team.getName() + ", 인원수 : "+ team.getMembers().size());
-
-        for (Member member : team.getMembers()) {
-          System.out.println(" -->  member = " + member);
-        }
-
-      }
 
       tx.commit();
     } catch (Exception e) {
