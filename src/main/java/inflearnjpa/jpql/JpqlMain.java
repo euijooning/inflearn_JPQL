@@ -1,6 +1,5 @@
 package inflearnjpa.jpql;
 
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -40,19 +39,18 @@ public class JpqlMain {
       em.persist(member3);
 
 
-      em.flush();
-      em.clear(); // 비움
+//      em.flush();
+//      em.clear(); // 비움
 
+      int resultCount = em.createQuery("update Member m set m.age = 20")
+          .executeUpdate();
 
-      List<Member> resultList =
-          em.createNamedQuery("Member.findByUsername", Member.class)
-              .setParameter("username", "회원1")
-              .getResultList();
+      em.clear(); // 여기
 
-      for (Member member : resultList) {
-        System.out.println("member = " + member);
-      }
+      Member findMember = em.find(Member.class, member1.getId());
+      System.out.println("findMember = " + findMember);
 
+//      System.out.println("resultCount = " + resultCount);
 
       tx.commit();
     } catch (Exception e) {
